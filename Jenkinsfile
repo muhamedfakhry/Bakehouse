@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label "iti-qena" }
 
     stages {
         stage('build') {
@@ -13,7 +13,6 @@ pipeline {
                 echo 'test'
                 sh """
                     echo "build number is ${BUILD_NUMBER}"
-                    docker ps
                     curl --help
                 """
             }
