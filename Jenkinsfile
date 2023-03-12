@@ -5,26 +5,14 @@ pipeline {
         stage('build') {
             steps {
                 echo 'build'
-                sh "echo ${BUILD_NUMBER}"
-            }
-        }
-        stage('test') {
-            steps {
-                echo 'test'
-                sh """
-                    echo "build number is ${BUILD_NUMBER}"
-                    curl --help
-                """
-            }
-        }
-        stage('publish') {
-            steps {
-                echo 'publish'
-            }
-        }
-        stage('sonarqube') {
-            steps {
-                echo 'sonarqube'
+                
+                withCredentials([usernamePassword(credentialsId: 'iti-qena-dockerhub', usernameVariable: 'USERNAME_QENA', passwordVariable: 'PASSWORD_QENA')]) {
+                    sh """
+                        docker build -t kareemelkasaby/itiqenabakehouse .
+                        docker login -u ${USERNAME_QENA} -p ${USERNAME_QENA}
+                        docker push kareemelkasaby/itiqenabakehouse 
+                    """
+                }
             }
         }
         stage('deploy') {
