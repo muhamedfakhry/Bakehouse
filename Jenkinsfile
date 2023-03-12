@@ -18,6 +18,14 @@ pipeline {
         stage('deploy') {
             steps {
                 echo 'deploy'
+                withCredentials([file(credentialsId: 'iti-qena-kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh """
+                      cp Deployment/deploy.yaml Deployment/deploy.yaml.tmp
+                      cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
+                      rm -f Deployment/deploy.yaml.tmp
+                      kubectl apply -f Deployment --kubeconfig=${KUBECONFIG}
+                    """
+                }
             }
         }
     }
