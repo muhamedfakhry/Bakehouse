@@ -17,12 +17,14 @@ pipeline {
         stage('deploy') {
             steps {
                 script {
-                  sh """
-                      mv Deployment/deploy.yaml Deployment/deploy.yaml.tmp
-                      cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
-                      rm -f Deployment/deploy.yaml.tmp
-                      kubectl apply -f Deployment -n default
-                    """
+                  withCredentials([file(credentialsId: 'iti-qena-kubeconfig', variable: 'KUBECONFIG')]) {
+                      sh """
+                          mv Deployment/deploy.yaml Deployment/deploy.yaml.tmp
+                          cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
+                          rm -f Deployment/deploy.yaml.tmp
+                          kubectl apply -f Deployment -n default
+                        """
+                  }
                 }
             }
         }
