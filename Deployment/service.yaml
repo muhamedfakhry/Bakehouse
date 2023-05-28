@@ -11,7 +11,6 @@ spec:
     port: 80
     protocol: TCP
     targetPort: 80
-    nodePort: 30011
   selector:
     app: bakehouse
   type: NodePort
