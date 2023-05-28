@@ -19,7 +19,13 @@ pipeline {
         stage('deploy') {
             steps {
                 echo 'deploy'
-                sh "echo 'a7la dof3a de wla eh'"
+                script {
+                    withCredentials([file(credentialsId: 'iti-smart-kubeconfig', variable: 'KUBECONFIG_ITI')]) {
+                        sh '''
+                            kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_ITI}
+                        '''
+                    }
+                }
             }
         }
     }
