@@ -20,7 +20,7 @@ pipeline {
             steps {
                 echo 'deploy'
                 script {
-                    withCredentials([file(credentialsId: 'iti-smart-kubeconfig', variable: 'KUBECONFIG_ITI')]) {
+                    withCredentials([file(credentialsId: 'iti-samrt-kubeconfig', variable: 'KUBECONFIG_ITI')]) {
                         sh '''
                             kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_ITI}
                         '''
