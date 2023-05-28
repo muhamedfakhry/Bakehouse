@@ -2,20 +2,18 @@ pipeline {
     agent { label 'iti-smart' }
 
     stages {
-        stage('test') {
-            steps {
-                echo 'test'
-                sh "ls"
-            }
-        }
         stage('build') {
             steps {
                 echo 'build'
-                sh '''
-                    docker --help
-                    echo ${BUILD_NUMBER}
-                    echo 'l jenkins 7elw w bsemsm'
-                '''
+                script{
+                    withCredentials([usernamePassword(credentialsId: 'iti-smart-dockerhub', usernameVariable: 'USERNAME_ITI', passwordVariable: 'PASSWORD_ITI')]) {
+                        sh '''
+                            docker login -u ${USERNAME_ITI} -p ${PASSWORD_ITI}
+                            docker build -t kareemelkasaby/bakehouseitismart:v1 .
+                            docker push 
+                        '''
+                    }
+                }
             }
         }
         stage('deploy') {
