@@ -14,7 +14,7 @@ pipeline {
                 sh '''
                     docker --help
                     echo ${BUILD_NUMBER}
-                
+                    echo 'l jenkins 7elw w bsemsm'
                 '''
             }
         }
