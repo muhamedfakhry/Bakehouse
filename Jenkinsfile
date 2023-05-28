@@ -10,7 +10,7 @@ pipeline {
                         sh '''
                             docker login -u ${USERNAME_ITI} -p ${PASSWORD_ITI}
                             docker build -t kareemelkasaby/bakehouseitismart:v1 .
-                            docker push 
+                            docker push kareemelkasaby/bakehouseitismart:v1
                         '''
                     }
                 }
