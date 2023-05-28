@@ -1,17 +1,24 @@
 pipeline {
     agent { label 'iti-smart' }
-
+    parameters {
+        choice(name: 'ENV', choices: ['dev', 'test', 'prod',"release"])
+    } 
     stages {
         stage('build') {
             steps {
                 echo 'build'
                 script{
-                    withCredentials([usernamePassword(credentialsId: 'iti-smart-dockerhub', usernameVariable: 'USERNAME_ITI', passwordVariable: 'PASSWORD_ITI')]) {
-                        sh '''
-                            docker login -u ${USERNAME_ITI} -p ${PASSWORD_ITI}
-                            docker build -t kareemelkasaby/bakehouseitismart:v${BUILD_NUMBER} .
-                            docker push kareemelkasaby/bakehouseitismart:v${BUILD_NUMBER}
-                        '''
+                    if (params.ENV == "release") {
+                        withCredentials([usernamePassword(credentialsId: 'iti-smart-dockerhub', usernameVariable: 'USERNAME_ITI', passwordVariable: 'PASSWORD_ITI')]) {
+                            sh '''
+                                docker login -u ${USERNAME_ITI} -p ${PASSWORD_ITI}
+                                docker build -t kareemelkasaby/bakehouseitismart:v${BUILD_NUMBER} .
+                                docker push kareemelkasaby/bakehouseitismart:v${BUILD_NUMBER}
+                            '''
+                        }
+                    }
+                    else {
+                        echo "user choosed ${params.ENV}"
                     }
                 }
             }
@@ -20,13 +27,15 @@ pipeline {
             steps {
                 echo 'deploy'
                 script {
-                    withCredentials([file(credentialsId: 'iti-samrt-kubeconfig', variable: 'KUBECONFIG_ITI')]) {
-                        sh '''
-                            mv Deployment/deploy.yaml Deployment/deploy.yaml.tmp
-                            cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
-                            rm -f Deployment/deploy.yaml.tmp
-                            kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_ITI}
-                        '''
+                    if (params.ENV == "dev" || params.ENV == "test" || params.ENV == "prod") {
+                        withCredentials([file(credentialsId: 'iti-samrt-kubeconfig', variable: 'KUBECONFIG_ITI')]) {
+                            sh '''
+                                mv Deployment/deploy.yaml Deployment/deploy.yaml.tmp
+                                cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
+                                rm -f Deployment/deploy.yaml.tmp
+                                kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_ITI} -n ${ENV}
+                            '''
+                        }
                     }
                 }
             }
