@@ -22,6 +22,7 @@ pipeline {
                 script {
                     withCredentials([file(credentialsId: 'iti-samrt-kubeconfig', variable: 'KUBECONFIG_ITI')]) {
                         sh '''
+                            tmp=$(cat Deployment/deploy.yaml | envsubst) && echo ${tmp} > Deployment/deploy.yaml
                             kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_ITI}
                         '''
                     }
