@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent {label "sys-sdmin-mnf"}
 
     stages {
         stage('build') {
