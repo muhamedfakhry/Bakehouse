@@ -17,7 +17,11 @@ pipeline {
         stage('deploy') {
             steps {
                 echo 'deploy'
-                sh "ls"
+                withCredentials([file(credentialsId: 'iti-sys-admin-mnf-kubeconfig-cred', variable: 'KUBECONFIG_ITI')]) {
+                    sh """
+                        kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_ITI}
+                    """
+                }
             }
         }
     }
