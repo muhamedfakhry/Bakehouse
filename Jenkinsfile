@@ -19,6 +19,9 @@ pipeline {
                 echo 'deploy'
                 withCredentials([file(credentialsId: 'iti-sys-admin-mnf-kubeconfig-cred', variable: 'KUBECONFIG_ITI')]) {
                     sh """
+                        mv Deployment/deploy.yaml Deployment/deploy.yaml.tmp
+                        cat Deployment/deploy.yaml.tmp | envsubst > Deployment/deploy.yaml
+                        rm -rf Deployment/deploy.yaml.tmp
                         kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_ITI}
                     """
                 }
