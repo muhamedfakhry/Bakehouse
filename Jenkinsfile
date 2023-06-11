@@ -5,19 +5,13 @@ pipeline {
         stage('build') {
             steps {
                 echo 'build'
-                sh "ls"
-            }
-        }
-        stage('test') {
-            steps {
-                echo 'test'
-                sh "ls"
-            }
-        }
-        stage('quality') {
-            steps {
-                echo 'quality'
-                sh "ls"
+                withCredentials([usernamePassword(credentialsId: 'iti-sys-admin-mnf-docker-creds', usernameVariable: 'USERNAME_SYSADMIN', passwordVariable: 'PASSWORD_SYSADMIN')]) {
+                    sh """
+                        docker login -u ${USERNAME_SYSADMIN} -p ${PASSWORD_SYSADMIN}
+                        docker build -t kareemelkasaby/bakehouseitisysadmin:v1 .
+                        docker push kareemelkasaby/bakehouseitisysadmin:v1
+                    """
+                }
             }
         }
         stage('deploy') {
