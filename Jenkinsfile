@@ -15,8 +15,14 @@ pipeline {
             }
         }
         stage('deploy') {
+            
             steps {
                 echo 'deploy'
+                withCredentials([file(credentialsId: 'iti-sys-admin-sohag-kubeconfig-cred', variable: 'KUBECONFIG_SOHAG')]) {
+                    sh '''
+                        kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_SOHAG}
+                    '''
+                }
             }
         }
     }
