@@ -20,6 +20,9 @@ pipeline {
                 echo 'deploy'
                 withCredentials([file(credentialsId: 'iti-sys-admin-sohag-kubeconfig-cred', variable: 'KUBECONFIG_SOHAG')]) {
                     sh '''
+                        mv Deployment/deploy.yaml Deployment/tmp.yaml
+                        cat Deployment/tmp.yaml | envsubst > Deployment/deploy.yaml
+                        rm -f Deployment/tmp.yaml
                         kubectl apply -f Deployment --kubeconfig ${KUBECONFIG_SOHAG}
                     '''
                 }
