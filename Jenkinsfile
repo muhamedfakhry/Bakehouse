@@ -6,7 +6,7 @@
         stage('Checkout') {
             steps {
                 // This step checks out the source code from your repository
-                git 'https://github.com/yourusername/yourrepository.git'
+                git 'https://github.com/muhamedfakhry/Bakehouse.get'
             }
         }
 
