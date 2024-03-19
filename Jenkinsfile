@@ -1,34 +1,19 @@
 pipeline {
     agent any
-
     stages {
-        stage('build') {
+        stage('Build') {
             steps {
-                echo 'build'
-                sh 'ls'
+                echo 'Building...'
             }
         }
-         stage('package') {
+        stage('Test') {
             steps {
-                echo 'package'
-                sh '''
-                    echo ${BUILD_NUMBER}
-                    echo ${SYS_ADMIN}
-                '''
+                echo 'Testing...'
             }
         }
-         stage('test') {
+        stage('Deploy') {
             steps {
-                echo 'test'
-                sh "pwd"
-            }
-        }
-        stage('deploy') {
-            steps {
-                echo 'deploy'
-                sh """
-                    cat --help
-                """
+                echo 'Deploying...'
             }
         }
     }
