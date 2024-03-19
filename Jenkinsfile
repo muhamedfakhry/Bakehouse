@@ -1,40 +1,46 @@
-ipeline {
-    agent {
-        label 'fakhry'
-    }
+
+  pipeline {
+    agent any // You can specify the agent based on your requirement. 'any' allows Jenkins to execute the pipeline on any available agent.
 
     stages {
-        stage('build') {
-            when { 
-                anyOf { branch 'dev' ;  branch 'test' ;  branch 'release' }
-            }
+        stage('Checkout') {
             steps {
-                echo 'build'
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-yassmin', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    sh '''
-                    docker build -t yassmin970/bakehouseyassmin:v${BUILD_NUMBER}-${BRANCH_NAME} .
-                    docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-                    docker push yassmin970/bakehouseyassmin:v${BUILD_NUMBER}-${BRANCH_NAME}
-                    '''
-                }
+                // This step checks out the source code from your repository
+                git 'https://github.com/yourusername/yourrepository.git'
             }
-        }       
-       stage('deploy') {
-           when { 
-                anyOf { branch 'dev' ;  branch 'test' ;  branch 'release' }
-            }
+        }
+
+        stage('Build') {
             steps {
-                echo 'deploy'
-                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG_YASSMIN')]) {
-                    sh '''
-                     cat Deployment/deploy.yaml | envsubst > Deployment/deploy.yaml.temp
-                     mv Deployment/deploy.yaml.temp Deployment/deploy.yaml
-                     kubectl apply -f Deployment --kubeconfig $KUBECONFIG_YASSMIN  -n ${BRANCH_NAME}  
-   
-                    '''
-                }
-                }
-            }    
-        
+                // Example: Build your project using Maven
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Example: Run unit tests
+                sh 'mvn test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Example: Deploy your application to a server
+                sh 'ssh user@server "deploy_script.sh"'
+            }
+        }
     }
-}    
+
+    post {
+        success {
+            // This block will execute if the pipeline succeeds
+            echo 'Pipeline succeeded! Deploying...'
+        }
+        failure {
+            // This block will execute if the pipeline fails
+            echo 'Pipeline failed! Notify the team...'
+        }
+    }
+}
+      
