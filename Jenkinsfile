@@ -1,6 +1,6 @@
 ipeline {
     agent {
-        label 'yassmin'
+        label 'fakhry'
     }
 
     stages {
